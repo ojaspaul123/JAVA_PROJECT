@@ -144,9 +144,9 @@ public class CalculatorWithHistory extends JFrame {
         editMenu.addSeparator();
         editMenu.add(clearHist);
 
-    // ═══════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════
     //  MAIN — Entry point
-    // ═══════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════
     public static void main(String[] args) {
         // SwingUtilities.invokeLater — always launch Swing on the EDT
         SwingUtilities.invokeLater(() -> {
