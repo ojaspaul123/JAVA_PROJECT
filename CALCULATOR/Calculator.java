@@ -143,6 +143,64 @@ public class CalculatorWithHistory extends JFrame {
         editMenu.add(pasteItem);
         editMenu.addSeparator();
         editMenu.add(clearHist);
+        // ── View Menu
+        JMenu viewMenu = styledMenu("View");
+        JMenuItem toggleHist = styledMenuItem("📜  Toggle History Panel");
+        JMenuItem themeItem  = styledMenuItem("🌙  Toggle Dark / Light");
+        toggleHist.addActionListener(e -> toggleHistoryPanel());
+        themeItem.addActionListener(e -> toggleTheme());
+        viewMenu.add(toggleHist);
+        viewMenu.add(themeItem);
+
+        // ── Help Menu
+        JMenu helpMenu = styledMenu("Help");
+        JMenuItem shortcutsItem = styledMenuItem("⌨  Keyboard Shortcuts");
+        shortcutsItem.addActionListener(e -> showShortcuts());
+        helpMenu.add(shortcutsItem);
+
+        menuBar.add(editMenu);
+        menuBar.add(viewMenu);
+        menuBar.add(helpMenu);
+
+        setJMenuBar(menuBar);
+    }
+
+    private JMenu styledMenu(String text) {
+        JMenu m = new JMenu(text);
+        m.setFont(FONT_BTN_SM);
+        m.setForeground(TEXT_PRIMARY);
+        m.setBackground(BG_APP);
+        return m;
+    }
+
+    private JMenuItem styledMenuItem(String text) {
+        JMenuItem item = new JMenuItem(text);
+        item.setFont(FONT_EXPR);
+        item.setForeground(TEXT_PRIMARY);
+        item.setBackground(BG_BTN_FUNC);
+        return item;
+    }    
+    // ═══════════════════════════════════════════════════════
+    //  MAIN UI BUILD
+    // ═══════════════════════════════════════════════════════
+    private void buildUI() {
+        getContentPane().setBackground(BG_APP);
+        setLayout(new BorderLayout());
+
+        // ── JSplitPane dividing calc | history ─────────────
+        calcPanel    = buildCalculatorPanel();
+        historyPanel = buildHistoryPanel();
+
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, calcPanel, historyPanel);
+        splitPane.setResizeWeight(0.6);
+        splitPane.setDividerSize(4);
+        splitPane.setBackground(BG_APP);
+        splitPane.setBorder(null);
+        splitPane.setContinuousLayout(true);
+
+        add(splitPane, BorderLayout.CENTER);
+    }
+    
 
     // ══════════════════════════════════════════════════════
     //  MAIN — Entry point
