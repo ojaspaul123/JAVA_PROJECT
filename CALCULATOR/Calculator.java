@@ -353,6 +353,126 @@ public class CalculatorWithHistory extends JFrame {
         btn.addActionListener(e -> handleButton(label));
         return btn;
     }
+    // ═══════════════════════════════════════════════════════
+    //  HISTORY PANEL (right side)
+    //  Learn: JList, DefaultListModel, JScrollPane
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildHistoryPanel() {
+        JPanel panel = new JPanel(new BorderLayout(0, 0));
+        panel.setBackground(BG_HISTORY);
+        panel.setPreferredSize(new Dimension(240, 0));
+
+        // Header
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(BG_HISTORY);
+        header.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 1, 2, 0, BORDER_COL),
+            BorderFactory.createEmptyBorder(12, 14, 10, 10)
+        ));
+        JLabel title = new JLabel("📜  History");
+        title.setFont(FONT_HEAD);
+        title.setForeground(TEXT_MUTED);
+
+        JButton clearBtn = new JButton("✕");
+        clearBtn.setFont(FONT_BTN_SM);
+        clearBtn.setForeground(TEXT_MUTED);
+        clearBtn.setBackground(BG_HISTORY);
+        clearBtn.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 4));
+        clearBtn.setFocusPainted(false);
+        clearBtn.setContentAreaFilled(false);
+        clearBtn.setToolTipText("Clear history");
+        clearBtn.addActionListener(e -> clearHistory());
+
+        header.add(title,    BorderLayout.WEST);
+        header.add(clearBtn, BorderLayout.EAST);
+
+        // JList — Learn: DefaultListModel + JList
+        historyList = new JList<>(listModel);
+        historyList.setBackground(BG_HISTORY);
+        historyList.setForeground(TEXT_PRIMARY);
+        historyList.setFont(FONT_HIST);
+        historyList.setFixedCellHeight(52);
+        historyList.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
+        historyList.setSelectionBackground(BG_HIST_SEL);
+        historyList.setSelectionForeground(Color.WHITE);
+
+        // Custom cell renderer for history items
+        historyList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+
+                JPanel cell = new JPanel();
+                cell.setLayout(new BoxLayout(cell, BoxLayout.Y_AXIS));
+                cell.setBackground(isSelected ? BG_HIST_SEL : (index % 2 == 0 ? BG_HIST_ITEM : BG_HISTORY));
+                cell.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 3, 0, 0, isSelected ? COLOR_EQUALS : BG_HISTORY),
+                    BorderFactory.createEmptyBorder(7, 10, 7, 10)
+                ));
+
+                String entry = value.toString();
+                String[] parts = entry.split("=");
+                String expr = parts[0].trim();
+                String res  = parts.length > 1 ? "= " + parts[1].trim() : "";
+
+                JLabel exprLbl = new JLabel(expr);
+                exprLbl.setFont(FONT_HIST);
+                exprLbl.setForeground(isSelected ? TEXT_EXPR : TEXT_MUTED);
+                exprLbl.setAlignmentX(LEFT_ALIGNMENT);
+
+                JLabel resLbl = new JLabel(res);
+                resLbl.setFont(FONT_HIST_RES);
+                resLbl.setForeground(isSelected ? Color.WHITE : TEXT_PRIMARY);
+                resLbl.setAlignmentX(LEFT_ALIGNMENT);
+
+                cell.add(exprLbl);
+                cell.add(resLbl);
+                return cell;
+            }
+        });
+
+        // Click history to restore value
+        historyList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    String selected = historyList.getSelectedValue();
+                    if (selected != null) {
+                        String[] parts = selected.split("=");
+                        if (parts.length > 1) {
+                            currentInput = parts[1].trim();
+                            updateDisplay();
+                        }
+                    }
+                }
+            }
+        });
+
+        // JScrollPane wrapping the JList
+        JScrollPane scroll = new JScrollPane(historyList);
+        scroll.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, BORDER_COL));
+        scroll.setBackground(BG_HISTORY);
+        scroll.getViewport().setBackground(BG_HISTORY);
+        scroll.getVerticalScrollBar().setBackground(BG_HISTORY);
+
+        // Footer hint
+        JLabel hint = new JLabel("Double-click to restore result");
+        hint.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        hint.setForeground(TEXT_MUTED);
+        hint.setHorizontalAlignment(SwingConstants.CENTER);
+        hint.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(1, 1, 0, 0, BORDER_COL),
+            BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        ));
+        hint.setBackground(BG_HISTORY);
+        hint.setOpaque(true);
+
+        panel.add(header, BorderLayout.NORTH);
+        panel.add(scroll,  BorderLayout.CENTER);
+        panel.add(hint,    BorderLayout.SOUTH);
+
+        return panel;
+    }
+
 
     // ══════════════════════════════════════════════════════
     //  MAIN — Entry point
