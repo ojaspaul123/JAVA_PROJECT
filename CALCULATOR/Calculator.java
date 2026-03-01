@@ -200,7 +200,159 @@ public class CalculatorWithHistory extends JFrame {
 
         add(splitPane, BorderLayout.CENTER);
     }
-    
+    // ═══════════════════════════════════════════════════════
+    //  CALCULATOR PANEL (left side)
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildCalculatorPanel() {
+        JPanel panel = new JPanel(new BorderLayout(0, 0));
+        panel.setBackground(BG_CALC);
+
+        panel.add(buildDisplay(),    BorderLayout.NORTH);
+        panel.add(buildButtonGrid(), BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // ── Display ────────────────────────────────────────────
+    private JPanel buildDisplay() {
+        JPanel display = new JPanel();
+        display.setLayout(new BoxLayout(display, BoxLayout.Y_AXIS));
+        display.setBackground(BG_DISPLAY);
+        display.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 2, 0, COLOR_EQUALS),
+            BorderFactory.createEmptyBorder(18, 22, 14, 22)
+        ));
+
+        // Top row: MEM indicator + theme toggle
+        JPanel topRow = new JPanel(new BorderLayout());
+        topRow.setBackground(BG_DISPLAY);
+        topRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+
+        memLabel = new JLabel("M: 0");
+        memLabel.setFont(FONT_EXPR);
+        memLabel.setForeground(COLOR_ACCENT);
+
+        // JToggleButton — Learn: toggle button
+        themeToggle = new JToggleButton("☀");
+        themeToggle.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
+        themeToggle.setForeground(TEXT_MUTED);
+        themeToggle.setBackground(BG_DISPLAY);
+        themeToggle.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+        themeToggle.setFocusPainted(false);
+        themeToggle.addActionListener(e -> toggleTheme());
+
+        topRow.add(memLabel,     BorderLayout.WEST);
+        topRow.add(themeToggle,  BorderLayout.EAST);
+
+        // Expression label (shows e.g. "12 + 34 =")
+        expressionLabel = new JLabel(" ");
+        expressionLabel.setFont(FONT_EXPR);
+        expressionLabel.setForeground(TEXT_EXPR);
+        expressionLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        // Main display number
+        displayLabel = new JLabel("0");
+        displayLabel.setFont(FONT_DISPLAY);
+        displayLabel.setForeground(TEXT_PRIMARY);
+        displayLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        displayLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        display.add(topRow);
+        display.add(Box.createVerticalStrut(4));
+        display.add(expressionLabel);
+        display.add(Box.createVerticalStrut(2));
+        display.add(displayLabel);
+
+        return display;
+    }
+
+    // ── Button Grid ────────────────────────────────────────
+    private JPanel buildButtonGrid() {
+        JPanel grid = new JPanel(new GridLayout(6, 4, 6, 6));
+        grid.setBackground(BG_CALC);
+        grid.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+        // Button layout:
+        // Row 1: MC  MR  M+  M-
+        // Row 2: AC  +/- %   ÷
+        // Row 3:  7   8   9   ×
+        // Row 4:  4   5   6   −
+        // Row 5:  1   2   3   +
+        // Row 6:  √   0   .   =
+
+        String[][] labels = {
+            { "MC",  "MR",  "M+",  "M−"  },
+            { "AC",  "±",   "%",   "÷"   },
+            { "7",   "8",   "9",   "×"   },
+            { "4",   "5",   "6",   "−"   },
+            { "1",   "2",   "3",   "+"   },
+            { "√",   "0",   ".",   "="   },
+        };
+
+        for (String[] row : labels) {
+            for (String label : row) {
+                grid.add(makeButton(label));
+            }
+        }
+
+        return grid;
+    }    
+── Single Button Factory ─────────────────────────────
+    private JButton makeButton(String label) {
+        JButton btn = new JButton(label);
+
+        // Choose color category
+        Color bg, fg;
+        if (label.equals("=")) {
+            bg = COLOR_EQUALS;
+            fg = Color.WHITE;
+        } else if ("÷×−+".contains(label)) {
+            bg = BG_BTN_OP;
+            fg = COLOR_ACCENT;
+        } else if ("AC±%√".contains(label) || label.startsWith("M")) {
+            bg = BG_BTN_FUNC;
+            fg = new Color(255, 200, 100);
+        } else {
+            bg = BG_BTN_NUM;
+            fg = TEXT_PRIMARY;
+        }
+
+        btn.setFont(label.length() > 1 ? FONT_BTN_SM : FONT_BTN);
+        btn.setForeground(fg);
+        btn.setBackground(bg);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Rounded look via custom painting
+        final Color normalBg  = bg;
+        final Color hoverBg   = brighten(bg, 30);
+        final Color pressedBg = darken(bg, 20);
+
+        btn.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                ButtonModel model = ((JButton) c).getModel();
+                Color drawBg = model.isPressed() ? pressedBg : model.isRollover() ? hoverBg : normalBg;
+                g2.setColor(drawBg);
+                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 14, 14);
+                g2.dispose();
+                super.paint(g, c);
+            }
+        });
+
+        final Color origFg = fg;
+        btn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btn.setForeground(label.equals("=") ? Color.WHITE : Color.WHITE); }
+            public void mouseExited(MouseEvent e)  { btn.setForeground(origFg); }
+        });
+
+        btn.addActionListener(e -> handleButton(label));
+        return btn;
+    }
 
     // ══════════════════════════════════════════════════════
     //  MAIN — Entry point
