@@ -297,7 +297,7 @@ public class CalculatorWithHistory extends JFrame {
 
         return grid;
     }    
-── Single Button Factory ─────────────────────────────
+// ── Single Button Factory ─────────────────────────────
     private JButton makeButton(String label) {
         JButton btn = new JButton(label);
 
