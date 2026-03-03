@@ -707,6 +707,69 @@ public class CalculatorWithHistory extends JFrame {
         repaint();
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  TOGGLE HISTORY PANEL VISIBILITY
+    // ═══════════════════════════════════════════════════════
+    private void toggleHistoryPanel() {
+        boolean visible = historyPanel.isVisible();
+        historyPanel.setVisible(!visible);
+        splitPane.setDividerSize(visible ? 0 : 4);
+        if (!visible) splitPane.setDividerLocation(0.6);
+        revalidate();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  CLIPBOARD — Learn: Toolkit.getDefaultToolkit().getSystemClipboard()
+    // ═══════════════════════════════════════════════════════
+    private void copyToClipboard() {
+        java.awt.datatransfer.StringSelection sel =
+            new java.awt.datatransfer.StringSelection(currentInput);
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+            .setContents(sel, null);
+        showToast("Copied: " + currentInput);
+    }
+
+    private void pasteFromClipboard() {
+        try {
+            String pasted = (String) Toolkit.getDefaultToolkit()
+                .getSystemClipboard().getData(java.awt.datatransfer.DataFlavor.stringFlavor);
+            if (pasted != null) {
+                pasted = pasted.trim();
+                Double.parseDouble(pasted); // validate it's a number
+                currentInput = pasted;
+                freshResult  = true;
+                updateDisplay();
+            }
+        } catch (Exception ex) {
+            showToast("Clipboard doesn't contain a valid number");
+        }
+    }
+
+    // ── Simple toast notification (JWindow) ───────────────
+    private void showToast(String message) {
+        JWindow toast = new JWindow(this);
+        JLabel lbl = new JLabel("  " + message + "  ");
+        lbl.setFont(FONT_EXPR);
+        lbl.setForeground(Color.WHITE);
+        lbl.setBackground(new Color(40, 40, 60, 220));
+        lbl.setOpaque(true);
+        lbl.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        toast.add(lbl);
+        toast.pack();
+
+        Point loc = getLocationOnScreen();
+        toast.setLocation(loc.x + getWidth() / 2 - toast.getWidth() / 2,
+                          loc.y + getHeight() - 60);
+        toast.setVisible(true);
+
+        // Auto-hide after 1.5s using javax.swing.Timer — Learn: Timer
+        new javax.swing.Timer(1500, ev -> toast.dispose()) {{
+            setRepeats(false);
+            start();
+        }};
+    }
+
+
 
 
     // ══════════════════════════════════════════════════════
