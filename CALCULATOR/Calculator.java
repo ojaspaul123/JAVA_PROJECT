@@ -472,6 +472,241 @@ public class CalculatorWithHistory extends JFrame {
 
         return panel;
     }
+    // ═══════════════════════════════════════════════════════
+    //  KEYBOARD LISTENER — Learn: KeyAdapter
+    // ═══════════════════════════════════════════════════════
+    private void addKeyboardListener() {
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                int code = e.getKeyCode();
+                char ch  = e.getKeyChar();
+
+                if (ch >= '0' && ch <= '9')            handleButton(String.valueOf(ch));
+                else if (ch == '+')                    handleButton("+");
+                else if (ch == '-')                    handleButton("−");
+                else if (ch == '*')                    handleButton("×");
+                else if (ch == '/')                    handleButton("÷");
+                else if (ch == '.')                    handleButton(".");
+                else if (ch == '%')                    handleButton("%");
+                else if (ch == '\n' || ch == '=')      handleButton("=");
+                else if (code == KeyEvent.VK_BACK_SPACE) backspace();
+                else if (code == KeyEvent.VK_ESCAPE)   handleButton("AC");
+                else if (e.isControlDown() && code == KeyEvent.VK_C) copyToClipboard();
+                else if (e.isControlDown() && code == KeyEvent.VK_V) pasteFromClipboard();
+            }
+        });
+        setFocusable(true);
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  BUTTON HANDLER — Core Logic
+    // ═══════════════════════════════════════════════════════
+    private void handleButton(String label) {
+        if (hasError && !label.equals("AC")) return;
+
+        switch (label) {
+            // ── Digits & Decimal ──────────────────────────
+            case "0": case "1": case "2": case "3": case "4":
+            case "5": case "6": case "7": case "8": case "9":
+                if (freshResult) { currentInput = label; freshResult = false; }
+                else currentInput = currentInput.equals("0") ? label : currentInput + label;
+                updateDisplay();
+                break;
+
+            case ".":
+                if (freshResult) { currentInput = "0."; freshResult = false; }
+                else if (!currentInput.contains(".")) currentInput += ".";
+                updateDisplay();
+                break;
+
+            // ── Operators ────────────────────────────────
+            case "+": case "−": case "×": case "÷":
+                if (!operator.isEmpty() && !freshResult) {
+                    calculate();
+                }
+                operand1    = parseDouble(currentInput);
+                operator    = label;
+                expression  = formatNum(operand1) + " " + label;
+                freshResult = true;
+                updateDisplay();
+                break;
+
+            // ── Equals ───────────────────────────────────
+            case "=":
+                if (operator.isEmpty()) break;
+                String fullExpr = expression + " " + currentInput;
+                calculate();
+                addHistory(fullExpr + "  =  " + currentInput);
+                operator    = "";
+                expression  = "";
+                freshResult = true;
+                updateDisplay();
+                break;
+
+            // ── Clear ────────────────────────────────────
+            case "AC":
+                currentInput = "0";
+                expression   = "";
+                operator     = "";
+                operand1     = 0;
+                freshResult  = false;
+                hasError     = false;
+                updateDisplay();
+                break;
+
+            // ── Sign Toggle ───────────────────────────────
+            case "±":
+                double val = parseDouble(currentInput);
+                currentInput = formatNum(-val);
+                updateDisplay();
+                break;
+
+            // ── Percentage ────────────────────────────────
+            case "%":
+                currentInput = formatNum(parseDouble(currentInput) / 100);
+                updateDisplay();
+                break;
+
+            // ── Square Root ───────────────────────────────
+            case "√":
+                double sqVal = parseDouble(currentInput);
+                if (sqVal < 0) { showError("Error: √negative"); break; }
+                String sqExpr = "√(" + currentInput + ")";
+                currentInput = formatNum(Math.sqrt(sqVal));
+                addHistory(sqExpr + "  =  " + currentInput);
+                freshResult = true;
+                updateDisplay();
+                break;
+
+            // ── Memory ───────────────────────────────────
+            case "MC": memory = 0; updateMemLabel(); break;
+            case "MR":
+                currentInput = formatNum(memory);
+                freshResult  = true;
+                updateDisplay();
+                break;
+            case "M+": memory += parseDouble(currentInput); updateMemLabel(); break;
+            case "M−": memory -= parseDouble(currentInput); updateMemLabel(); break;
+        }
+    }
+
+    // ── Perform the pending calculation ───────────────────
+    private void calculate() {
+        double operand2 = parseDouble(currentInput);
+        double result;
+        try {
+            switch (operator) {
+                case "+": result = operand1 + operand2; break;
+                case "−": result = operand1 - operand2; break;
+                case "×": result = operand1 * operand2; break;
+                case "÷":
+                    if (operand2 == 0) { showError("Error: ÷ by 0"); return; }
+                    result = operand1 / operand2;
+                    break;
+                default: return;
+            }
+            currentInput = formatNum(result);
+        } catch (Exception e) {
+            showError("Error");
+        }
+    }
+
+    // ── Backspace ─────────────────────────────────────────
+    private void backspace() {
+        if (freshResult || currentInput.length() <= 1) {
+            currentInput = "0";
+        } else {
+            currentInput = currentInput.substring(0, currentInput.length() - 1);
+            if (currentInput.equals("-")) currentInput = "0";
+        }
+        updateDisplay();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  DISPLAY & HISTORY UPDATES
+    // ═══════════════════════════════════════════════════════
+    private void updateDisplay() {
+        // Shrink font if number is long
+        String text = currentInput;
+        int len = text.length();
+        if (len > 14)      displayLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        else if (len > 10) displayLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        else if (len > 7)  displayLabel.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        else               displayLabel.setFont(FONT_DISPLAY);
+
+        displayLabel.setText(currentInput);
+        expressionLabel.setText(expression.isEmpty() ? " " : expression);
+    }
+
+    private void addHistory(String entry) {
+        historyData.add(0, entry);              // prepend (newest first)
+        listModel.add(0, entry);                // update JList model
+        if (listModel.getSize() > 50) {         // cap at 50 entries
+            listModel.remove(listModel.getSize() - 1);
+            historyData.remove(historyData.size() - 1);
+        }
+    }
+
+    private void clearHistory() {
+        historyData.clear();
+        listModel.clear();
+    }
+
+    private void updateMemLabel() {
+        memLabel.setText("M: " + formatNum(memory));
+    }
+
+    private void showError(String msg) {
+        currentInput = msg;
+        hasError     = true;
+        displayLabel.setForeground(new Color(255, 100, 100));
+        displayLabel.setText(msg);
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  THEME TOGGLE — Light / Dark  (Learn: dynamic recoloring)
+    // ═══════════════════════════════════════════════════════
+    private void toggleTheme() {
+        isDarkMode = !isDarkMode;
+        themeToggle.setText(isDarkMode ? "☀" : "🌙");
+
+        if (isDarkMode) {
+            BG_APP       = new Color(18, 18, 24);
+            BG_DISPLAY   = new Color(10, 10, 15);
+            BG_CALC      = new Color(26, 26, 36);
+            BG_BTN_NUM   = new Color(40, 40, 58);
+            BG_BTN_OP    = new Color(60, 60, 88);
+            BG_BTN_FUNC  = new Color(34, 34, 50);
+            BG_HISTORY   = new Color(22, 22, 32);
+            BG_HIST_ITEM = new Color(32, 32, 46);
+            BG_HIST_SEL  = new Color(50, 50, 75);
+            TEXT_PRIMARY = new Color(240, 240, 255);
+            TEXT_MUTED   = new Color(130, 130, 165);
+            TEXT_EXPR    = new Color(160, 160, 200);
+            BORDER_COL   = new Color(50, 50, 72);
+        } else {
+            BG_APP       = new Color(240, 240, 248);
+            BG_DISPLAY   = new Color(255, 255, 255);
+            BG_CALC      = new Color(230, 230, 242);
+            BG_BTN_NUM   = new Color(210, 210, 228);
+            BG_BTN_OP    = new Color(190, 190, 215);
+            BG_BTN_FUNC  = new Color(220, 220, 236);
+            BG_HISTORY   = new Color(248, 248, 255);
+            BG_HIST_ITEM = new Color(235, 235, 248);
+            BG_HIST_SEL  = new Color(200, 200, 230);
+            TEXT_PRIMARY = new Color(20,  20,  40);
+            TEXT_MUTED   = new Color(90,  90, 120);
+            TEXT_EXPR    = new Color(70,  70, 110);
+            BORDER_COL   = new Color(190, 190, 215);
+        }
+
+        // Rebuild UI with new colors
+        getContentPane().removeAll();
+        buildUI();
+        revalidate();
+        repaint();
+    }
+
 
 
     // ══════════════════════════════════════════════════════
