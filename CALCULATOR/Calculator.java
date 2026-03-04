@@ -49,7 +49,7 @@ import java.util.ArrayList;
  *    Escape           →  Clear (AC)
  *    Ctrl+C           →  Copy result
  */
-public class CalculatorWithHistory extends JFrame {
+public class Calculator extends JFrame {
 
     // ── Theme Colors (Dark Mode) ────────────────────────────
     private static Color BG_APP       = new Color(18, 18, 24);
@@ -106,7 +106,7 @@ public class CalculatorWithHistory extends JFrame {
     // ═══════════════════════════════════════════════════════
     //  CONSTRUCTOR
     // ═══════════════════════════════════════════════════════
-    public CalculatorWithHistory() {
+    public Calculator() {
         setTitle("Calculator  ·  with History");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(720, 580);
@@ -768,9 +768,71 @@ public class CalculatorWithHistory extends JFrame {
             start();
         }};
     }
+    // ═══════════════════════════════════════════════════════
+    //  SHORTCUTS DIALOG — Learn: JOptionPane with custom panel
+    // ═══════════════════════════════════════════════════════
+    private void showShortcuts() {
+        String[][] shortcuts = {
+            {"0–9",      "Type digits"},
+            {"+ - * /",  "Operators"},
+            {"Enter / =","Calculate"},
+            {"Backspace", "Delete last digit"},
+            {"Escape",   "Clear (AC)"},
+            {"Ctrl+C",   "Copy result"},
+            {"Ctrl+V",   "Paste number"},
+            {"Dbl-click history", "Restore value"},
+        };
 
+        JPanel panel = new JPanel(new GridLayout(shortcuts.length, 2, 6, 4));
+        panel.setBackground(BG_CALC);
+        panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
+        for (String[] row : shortcuts) {
+            JLabel key = new JLabel(row[0]);
+            key.setFont(FONT_HIST_RES);
+            key.setForeground(COLOR_ACCENT);
 
+            JLabel desc = new JLabel(row[1]);
+            desc.setFont(FONT_HIST);
+            desc.setForeground(TEXT_MUTED);
+
+            panel.add(key);
+            panel.add(desc);
+        }
+
+        JOptionPane.showMessageDialog(this, panel,
+            "⌨  Keyboard Shortcuts", JOptionPane.PLAIN_MESSAGE);
+    }
+// ═══════════════════════════════════════════════════════
+    //  UTILITY HELPERS
+    // ═══════════════════════════════════════════════════════
+    private double parseDouble(String s) {
+        try { return Double.parseDouble(s); }
+        catch (NumberFormatException e) { return 0; }
+    }
+
+    private String formatNum(double v) {
+        if (Double.isNaN(v) || Double.isInfinite(v)) return "Error";
+        if (v == Math.floor(v) && !Double.isInfinite(v) && Math.abs(v) < 1e15)
+            return String.valueOf((long) v);
+        return df.format(v);
+    }
+
+    private Color brighten(Color c, int amt) {
+        return new Color(
+            Math.min(255, c.getRed()   + amt),
+            Math.min(255, c.getGreen() + amt),
+            Math.min(255, c.getBlue()  + amt)
+        );
+    }
+
+    private Color darken(Color c, int amt) {
+        return new Color(
+            Math.max(0, c.getRed()   - amt),
+            Math.max(0, c.getGreen() - amt),
+            Math.max(0, c.getBlue()  - amt)
+        );
+    }
 
     // ══════════════════════════════════════════════════════
     //  MAIN — Entry point
@@ -781,7 +843,7 @@ public class CalculatorWithHistory extends JFrame {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ignored) {}
-            new CalculatorWithHistory();
+            new Calculator();
         });
     }
 }        
