@@ -5,7 +5,8 @@
 ---
 ## 📸 Preview
 
-![Calculator with History](1772655145047_image.png)
+<img width="530" height="425" alt="image" src="https://github.com/user-attachments/assets/db1673e4-55e8-4249-be02-7ee6799d1a93" />
+
 ## 📚 Summary of What You Learn
 
 \```
