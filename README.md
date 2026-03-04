@@ -1,0 +1,1 @@
+A Java desktop application with a GUI (Swing/JavaFX) to visualize GitHub repositories, where the user inputs a repo, the GitHub API fetches data, and the GUI displays repository info, commits, and file explorer interactively.
