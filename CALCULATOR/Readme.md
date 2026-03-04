@@ -17,3 +17,4 @@ Styling         →  Graphics2D, Color, Font, custom rounded ButtonUI
 State Mgmt      →  currentInput, operator, operand1, freshResult flags
 System APIs     →  Clipboard, Timer, JOptionPane, JMenuBar
 Threading       →  SwingUtilities.invokeLater (EDT pattern)
+\```
