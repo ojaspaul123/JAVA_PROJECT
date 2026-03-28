@@ -75,5 +75,42 @@ public class InvoiceGenerator extends JFrame {
 
         setVisible(true);
     }
+    // ═══════════════════════════════════════════════════════
+    //  TOP BAR — Title + Invoice Number
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildTopBar() {
+        JPanel bar = new JPanel(new BorderLayout());
+        bar.setBackground(BG_CARD);
+        bar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT),
+            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        ));
+
+        // Left — App title
+        JLabel title = new JLabel("🧾  Invoice Generator");
+        title.setFont(FONT_TITLE);
+        title.setForeground(ACCENT);
+
+        // Right — Invoice number
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        rightPanel.setBackground(BG_CARD);
+
+        JLabel invLabel = new JLabel("Invoice #:");
+        invLabel.setFont(FONT_HEAD);
+        invLabel.setForeground(TEXT_MUTED);
+
+        invoiceNoField = styledTextField(String.valueOf(invoiceCounter), 80);
+        invoiceNoField.setFont(FONT_MONO);
+        invoiceNoField.setForeground(ACCENT);
+        invoiceNoField.setEditable(false);
+
+        rightPanel.add(invLabel);
+        rightPanel.add(invoiceNoField);
+
+        bar.add(title,      BorderLayout.WEST);
+        bar.add(rightPanel, BorderLayout.EAST);
+        return bar;
+    }
+
 
     
