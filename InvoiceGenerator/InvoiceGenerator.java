@@ -111,6 +111,48 @@ public class InvoiceGenerator extends JFrame {
         bar.add(rightPanel, BorderLayout.EAST);
         return bar;
     }
+    // ═══════════════════════════════════════════════════════
+    //  MAIN PANEL — Two columns: Left form | Right table
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildMainPanel() {
+        JPanel main = new JPanel(new GridBagLayout());
+        main.setBackground(BG_DARK);
+        main.setBorder(BorderFactory.createEmptyBorder(16, 16, 8, 16));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 10);
+
+        // Left column (forms)
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 0.38; gbc.weighty = 1.0;
+        main.add(buildLeftColumn(), gbc);
+
+        // Right column (table + summary)
+        gbc.gridx = 1; gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.weightx = 0.62;
+        main.add(buildRightColumn(), gbc);
+
+        return main;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  LEFT COLUMN — Shop Info | Customer Info | Add Item
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildLeftColumn() {
+        JPanel col = new JPanel();
+        col.setLayout(new BoxLayout(col, BoxLayout.Y_AXIS));
+        col.setBackground(BG_DARK);
+
+        col.add(buildShopInfoCard());
+        col.add(Box.createVerticalStrut(12));
+        col.add(buildCustomerCard());
+        col.add(Box.createVerticalStrut(12));
+        col.add(buildAddItemCard());
+        col.add(Box.createVerticalGlue());
+
+        return col;
+    }
 
 
     
