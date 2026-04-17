@@ -207,7 +207,7 @@ public class InvoiceGenerator extends JFrame {
         priceField = styledTextField("0.00", 0);
         addFormRow(card, "Unit Price (₹):", priceField);
 
-        // Add button
+        // Add     button 
         card.add(Box.createVerticalStrut(10));
         JButton addBtn = accentButton("  ➕  Add to Invoice  ");
         addBtn.addActionListener(e -> addItemToTable());
