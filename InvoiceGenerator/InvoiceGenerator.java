@@ -180,7 +180,6 @@ public class InvoiceGenerator extends JFrame {
 
         return card;
     }
-
     // ── Card: Add Item ─────────────────────────────────────
     private JPanel buildAddItemCard() {
         JPanel card = card("➕  Add Item");
