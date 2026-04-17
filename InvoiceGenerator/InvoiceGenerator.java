@@ -153,6 +153,67 @@ public class InvoiceGenerator extends JFrame {
 
         return col;
     }
+ // ── Card: Shop Information ─────────────────────────────
+    private JPanel buildShopInfoCard() {
+        JPanel card = card("🏪  Shop Information");
 
+        shopNameField    = styledTextField("My Little Shop", 0);
+        shopAddressField = styledTextField("123, Main Street, City", 0);
+        shopPhoneField   = styledTextField("+91 98765 43210", 0);
+
+        addFormRow(card, "Shop Name:",    shopNameField);
+        addFormRow(card, "Address:",      shopAddressField);
+        addFormRow(card, "Phone:",        shopPhoneField);
+
+        return card;
+    }
+
+    // ── Card: Customer Information ─────────────────────────
+    private JPanel buildCustomerCard() {
+        JPanel card = card("👤  Customer Details");
+
+        custNameField  = styledTextField("Walk-in Customer", 0);
+        custPhoneField = styledTextField("", 0);
+
+        addFormRow(card, "Customer Name:", custNameField);
+        addFormRow(card, "Phone:",         custPhoneField);
+
+        return card;
+    }
+
+    // ── Card: Add Item ─────────────────────────────────────
+    private JPanel buildAddItemCard() {
+        JPanel card = card("➕  Add Item");
+
+        // Item Name
+        itemNameField = styledTextField("", 0);
+        addFormRow(card, "Item Name:", itemNameField);
+
+        // Category ComboBox — Learn: JComboBox
+        categoryCombo = new JComboBox<>(new String[]{
+            "Grocery", "Bakery", "Electronics", "Clothing",
+            "Stationery", "Medicine", "Other"
+        });
+        styleCombo(categoryCombo);
+        addFormRow(card, "Category:", categoryCombo);
+
+        // Quantity Spinner — Learn: JSpinner
+        SpinnerNumberModel spinnerModel = new SpinnerNumberModel(1, 1, 9999, 1);
+        quantitySpinner = new JSpinner(spinnerModel);
+        styleSpinner(quantitySpinner);
+        addFormRow(card, "Quantity:", quantitySpinner);
+
+        // Price
+        priceField = styledTextField("0.00", 0);
+        addFormRow(card, "Unit Price (₹):", priceField);
+
+        // Add button
+        card.add(Box.createVerticalStrut(10));
+        JButton addBtn = accentButton("  ➕  Add to Invoice  ");
+        addBtn.addActionListener(e -> addItemToTable());
+        card.add(addBtn);
+
+        return card;
+    }
 
     
