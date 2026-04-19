@@ -215,4 +215,75 @@ public class InvoiceGenerator extends JFrame {
         return card;
     }
 
+// ═══════════════════════════════════════════════════════
+    //  RIGHT COLUMN — Items Table + Summary + Buttons
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildRightColumn() {
+        JPanel col = new JPanel(new BorderLayout(0, 12));
+        col.setBackground(BG_DARK);
+
+        col.add(buildItemsTablePanel(), BorderLayout.CENTER);
+        col.add(buildBottomSection(),   BorderLayout.SOUTH);
+
+        return col;
+    }
+
+    // ── Items Table ────────────────────────────────────────
+    private JPanel buildItemsTablePanel() {
+        JPanel wrapper = card("🛒  Invoice Items");
+        wrapper.setLayout(new BorderLayout());
+
+        // Table columns
+        String[] columns = {"#", "Item Name", "Category", "Qty", "Unit Price", "Total"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override public boolean isCellEditable(int row, int col) { return false; }
+        };
+
+        itemsTable = new JTable(tableModel);
+        styleTable(itemsTable);
+
+        // Column widths
+        int[] widths = {30, 180, 90, 40, 90, 90};
+        for (int i = 0; i < widths.length; i++) {
+            itemsTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
+
+        JScrollPane scroll = new JScrollPane(itemsTable);
+        scroll.setBackground(BG_CARD);
+        scroll.getViewport().setBackground(BG_CARD);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+
+        wrapper.add(scroll, BorderLayout.CENTER);
+
+        // Delete row button
+        JButton deleteBtn = new JButton("🗑  Remove Selected Row");
+        deleteBtn.setFont(FONT_SMALL);
+        deleteBtn.setForeground(DELETE_RED);
+        deleteBtn.setBackground(BG_CARD);
+        deleteBtn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(DELETE_RED, 1, true),
+            BorderFactory.createEmptyBorder(5, 12, 5, 12)
+        ));
+        deleteBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        deleteBtn.addActionListener(e -> deleteSelectedRow());
+
+        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 6));
+        btnRow.setBackground(BG_CARD);
+        btnRow.add(deleteBtn);
+        wrapper.add(btnRow, BorderLayout.SOUTH);
+
+        return wrapper;
+    }
+
+    // ── Bottom Section — Summary + Action Buttons ──────────
+    private JPanel buildBottomSection() {
+        JPanel section = new JPanel(new BorderLayout(12, 0));
+        section.setBackground(BG_DARK);
+
+        section.add(buildSummaryCard(),  BorderLayout.CENTER);
+        section.add(buildActionButtons(), BorderLayout.EAST);
+
+        return section;
+    }
+
     
