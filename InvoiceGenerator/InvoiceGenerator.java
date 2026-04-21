@@ -285,5 +285,43 @@ public class InvoiceGenerator extends JFrame {
 
         return section;
     }
+private JPanel buildSummaryCard() {
+        JPanel card = card("💰  Summary");
+        card.setLayout(new GridLayout(3, 2, 6, 6));
+
+        subtotalLabel = summaryLabel("₹ 0.00");
+        taxLabel      = summaryLabel("₹ 0.00");
+        totalLabel    = new JLabel("₹ 0.00");
+        totalLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        totalLabel.setForeground(ACCENT);
+
+        card.add(muted("Subtotal:"));  card.add(subtotalLabel);
+        card.add(muted("GST (18%):")); card.add(taxLabel);
+        card.add(muted("TOTAL:"));     card.add(totalLabel);
+
+        return card;
+    }
+
+    private JPanel buildActionButtons() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(BG_DARK);
+
+        JButton printBtn   = accentButton("🖨  Print Invoice");
+        JButton clearBtn   = ghostButton("🗑  Clear All");
+        JButton newInvBtn  = ghostButton("📄  New Invoice");
+
+        printBtn .addActionListener(e -> printInvoice());
+        clearBtn .addActionListener(e -> clearAll());
+        newInvBtn.addActionListener(e -> newInvoice());
+
+        panel.add(printBtn);
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(clearBtn);
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(newInvBtn);
+
+        return panel;
+    }
 
     
