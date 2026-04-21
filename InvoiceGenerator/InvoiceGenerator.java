@@ -323,5 +323,70 @@ private JPanel buildSummaryCard() {
 
         return panel;
     }
+ // ═══════════════════════════════════════════════════════
+    //  BOTTOM STATUS BAR
+    // ═══════════════════════════════════════════════════════
+    private JPanel buildBottomBar() {
+        JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 4));
+        bar.setBackground(BG_CARD);
+        bar.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, BORDER_COLOR));
+
+        JLabel hint = new JLabel("💡 Tip: Select a row and click Remove to delete. Press Print to preview your invoice.");
+        hint.setFont(FONT_SMALL);
+        hint.setForeground(TEXT_MUTED);
+        bar.add(hint);
+
+        return bar;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  LOGIC — Add Item
+    // ═══════════════════════════════════════════════════════
+    private void addItemToTable() {
+        String name     = itemNameField.getText().trim();
+        String category = (String) categoryCombo.getSelectedItem();
+        int    qty      = (int) quantitySpinner.getValue();
+        String priceStr = priceField.getText().trim();
+
+        if (name.isEmpty()) {
+            // JOptionPane — Learn: dialog boxes
+            JOptionPane.showMessageDialog(this,
+                "Please enter an item name.",
+                "Missing Information",
+                JOptionPane.WARNING_MESSAGE);
+            itemNameField.requestFocus();
+            return;
+        }
+
+        double price;
+        try {
+            price = Double.parseDouble(priceStr);
+            if (price < 0) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                "Please enter a valid price (e.g. 49.99).",
+                "Invalid Price",
+                JOptionPane.ERROR_MESSAGE);
+            priceField.requestFocus();
+            return;
+        }
+
+        double lineTotal = qty * price;
+        int rowNum       = tableModel.getRowCount() + 1;
+
+        // Add row to JTable via DefaultTableModel
+        tableModel.addRow(new Object[]{
+            rowNum,
+            name,
+            category,
+            qty,
+            String.format("₹ %.2f", price),
+            String.format("₹ %.2f", lineTotal)
+        });
+
+        updateSummary();
+        clearItemFields();
+        itemNameField.requestFocus();
+    }
 
     
