@@ -388,5 +388,24 @@ private JPanel buildSummaryCard() {
         clearItemFields();
         itemNameField.requestFocus();
     }
+    // ═══════════════════════════════════════════════════════
+    //  LOGIC — Delete Selected Row
+    // ═══════════════════════════════════════════════════════
+    private void deleteSelectedRow() {
+        int selected = itemsTable.getSelectedRow();
+        if (selected == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Please select a row to remove.",
+                "No Selection",
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        tableModel.removeRow(selected);
+        // Re-number rows
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            tableModel.setValueAt(i + 1, i, 0);
+        }
+        updateSummary();
+    }
 
     
