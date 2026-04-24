@@ -408,4 +408,21 @@ private JPanel buildSummaryCard() {
         updateSummary();
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  LOGIC — Update Summary Totals
+    // ═══════════════════════════════════════════════════════
+    private void updateSummary() {
+        double subtotal = 0;
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String val = tableModel.getValueAt(i, 5).toString().replace("₹ ", "");
+            subtotal += Double.parseDouble(val);
+        }
+        double tax   = subtotal * 0.18;
+        double total = subtotal + tax;
+
+        subtotalLabel.setText(String.format("₹ %.2f", subtotal));
+        taxLabel.setText(String.format("₹ %.2f", tax));
+        totalLabel.setText(String.format("₹ %.2f", total));
+    }
+
     
