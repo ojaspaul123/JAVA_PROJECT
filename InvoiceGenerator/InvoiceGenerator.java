@@ -425,4 +425,67 @@ private JPanel buildSummaryCard() {
         totalLabel.setText(String.format("₹ %.2f", total));
     }
 
+ // ═══════════════════════════════════════════════════════
+    //  LOGIC — Print Invoice (Printable interface demo)
+    // ═══════════════════════════════════════════════════════
+    private void printInvoice() {
+        if (tableModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this,
+                "Please add items before printing.",
+                "Empty Invoice", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Build text invoice in JTextArea
+        StringBuilder sb = new StringBuilder();
+        sb.append("╔══════════════════════════════════════╗\n");
+        sb.append("       " + shopNameField.getText() + "\n");
+        sb.append("  " + shopAddressField.getText() + "\n");
+        sb.append("  Ph: " + shopPhoneField.getText() + "\n");
+        sb.append("╠══════════════════════════════════════╣\n");
+        sb.append("  Invoice #: " + invoiceNoField.getText() + "\n");
+        sb.append("  Date:      " + new SimpleDateFormat("dd-MMM-yyyy HH:mm").format(new Date()) + "\n");
+        sb.append("  Customer:  " + custNameField.getText() + "\n");
+        sb.append("╠══════════════════════════════════════╣\n");
+        sb.append(String.format("  %-20s %4s %10s\n", "Item", "Qty", "Total"));
+        sb.append("  ──────────────────────────────────\n");
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String name  = tableModel.getValueAt(i, 1).toString();
+            String qty   = tableModel.getValueAt(i, 3).toString();
+            String total = tableModel.getValueAt(i, 5).toString();
+            sb.append(String.format("  %-20s %4s %10s\n",
+                name.length() > 20 ? name.substring(0, 18) + ".." : name, qty, total));
+        }
+
+        sb.append("  ──────────────────────────────────\n");
+        sb.append("  Subtotal: " + subtotalLabel.getText() + "\n");
+        sb.append("  GST(18%): " + taxLabel.getText() + "\n");
+        sb.append("  TOTAL:    " + totalLabel.getText() + "\n");
+        sb.append("╚══════════════════════════════════════╝\n");
+        sb.append("     Thank you for shopping with us!\n");
+
+        // Show in a dialog with JTextArea
+        JTextArea preview = new JTextArea(sb.toString());
+        preview.setFont(new Font("Courier New", Font.PLAIN, 13));
+        preview.setEditable(false);
+        preview.setBackground(Color.WHITE);
+        preview.setForeground(Color.BLACK);
+
+        JScrollPane sp = new JScrollPane(preview);
+        sp.setPreferredSize(new Dimension(420, 420));
+
+        int choice = JOptionPane.showConfirmDialog(this, sp,
+            "Invoice Preview — Invoice #" + invoiceNoField.getText(),
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (choice == JOptionPane.OK_OPTION) {
+            try {
+                preview.print();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Print failed: " + ex.getMessage());
+            }
+        }
+    }
+
     
