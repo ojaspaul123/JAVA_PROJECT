@@ -488,4 +488,33 @@ private JPanel buildSummaryCard() {
         }
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  LOGIC — New Invoice / Clear All
+    // ═══════════════════════════════════════════════════════
+    private void newInvoice() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Start a new invoice? Current data will be saved.",
+            "New Invoice", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            invoiceCounter++;
+            invoiceNoField.setText(String.valueOf(invoiceCounter));
+            clearAll();
+            custNameField.setText("Walk-in Customer");
+            custPhoneField.setText("");
+        }
+    }
+
+    private void clearAll() {
+        tableModel.setRowCount(0);
+        updateSummary();
+        clearItemFields();
+    }
+
+    private void clearItemFields() {
+        itemNameField.setText("");
+        priceField.setText("0.00");
+        quantitySpinner.setValue(1);
+        categoryCombo.setSelectedIndex(0);
+    }
+
     
