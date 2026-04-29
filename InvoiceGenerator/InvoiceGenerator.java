@@ -517,4 +517,24 @@ private JPanel buildSummaryCard() {
         categoryCombo.setSelectedIndex(0);
     }
 
+ // ═══════════════════════════════════════════════════════
+    //  STYLING HELPERS
+    // ═══════════════════════════════════════════════════════
+
+    /** Creates a styled card panel with a titled border */
+    private JPanel card(String title) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(BG_CARD);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(BORDER_COLOR, 1, true),
+                "  " + title + "  ",
+                TitledBorder.LEFT, TitledBorder.TOP,
+                FONT_HEAD, ACCENT
+            ),
+            BorderFactory.createEmptyBorder(8, 10, 10, 10)
+        ));
+        return panel;
+    }
     
