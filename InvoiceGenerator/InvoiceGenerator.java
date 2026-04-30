@@ -537,4 +537,35 @@ private JPanel buildSummaryCard() {
         ));
         return panel;
     }
+
+   /** Adds a label-component row to a card */
+    private void addFormRow(JPanel card, String labelText, JComponent field) {
+        JPanel row = new JPanel(new BorderLayout(8, 0));
+        row.setBackground(BG_CARD);
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        row.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
+
+        JLabel lbl = new JLabel(labelText);
+        lbl.setFont(FONT_BODY);
+        lbl.setForeground(TEXT_MUTED);
+        lbl.setPreferredSize(new Dimension(110, 26));
+
+        row.add(lbl,   BorderLayout.WEST);
+        row.add(field, BorderLayout.CENTER);
+        card.add(row);
+    }
+
+    private JTextField styledTextField(String text, int cols) {
+        JTextField tf = cols > 0 ? new JTextField(text, cols) : new JTextField(text);
+        tf.setFont(FONT_BODY);
+        tf.setForeground(TEXT_PRIMARY);
+        tf.setBackground(BG_DARK);
+        tf.setCaretColor(ACCENT);
+        tf.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1, true),
+            BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        return tf;
+    }
+
     
