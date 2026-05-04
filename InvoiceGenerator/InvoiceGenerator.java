@@ -567,5 +567,21 @@ private JPanel buildSummaryCard() {
         ));
         return tf;
     }
+    private void styleCombo(JComboBox<String> combo) {
+        combo.setFont(FONT_BODY);
+        combo.setForeground(TEXT_PRIMARY);
+        combo.setBackground(BG_DARK);
+        combo.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1, true));
+    }
 
+    private void styleSpinner(JSpinner spinner) {
+        spinner.setFont(FONT_BODY);
+        spinner.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1, true));
+        JComponent editor = spinner.getEditor();
+        if (editor instanceof JSpinner.DefaultEditor de) {
+            de.getTextField().setFont(FONT_BODY);
+            de.getTextField().setForeground(TEXT_PRIMARY);
+            de.getTextField().setBackground(BG_DARK);
+        }
+    }
     
