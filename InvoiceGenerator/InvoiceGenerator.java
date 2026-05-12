@@ -584,4 +584,46 @@ private JPanel buildSummaryCard() {
             de.getTextField().setBackground(BG_DARK);
         }
     }
+
+   private void styleTable(JTable table) {
+        table.setFont(FONT_BODY);
+        table.setForeground(TEXT_PRIMARY);
+        table.setBackground(BG_CARD);
+        table.setGridColor(BORDER_COLOR);
+        table.setRowHeight(28);
+        table.setSelectionBackground(ACCENT);
+        table.setSelectionForeground(BG_DARK);
+        table.setShowHorizontalLines(true);
+        table.setShowVerticalLines(false);
+        table.setIntercellSpacing(new Dimension(0, 1));
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(FONT_HEAD);
+        header.setForeground(ACCENT);
+        header.setBackground(BG_DARK);
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT));
+        header.setReorderingAllowed(false);
+
+        // Alternate row colors via custom renderer
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object val,
+                boolean sel, boolean focus, int row, int col) {
+                super.getTableCellRendererComponent(t, val, sel, focus, row, col);
+                setFont(FONT_BODY);
+                if (sel) {
+                    setBackground(ACCENT);
+                    setForeground(BG_DARK);
+                } else {
+                    setBackground(row % 2 == 0 ? BG_CARD : TABLE_ALT);
+                    setForeground(TEXT_PRIMARY);
+                }
+                setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+                // Right-align price columns
+                if (col == 4 || col == 5) setHorizontalAlignment(RIGHT);
+                else setHorizontalAlignment(LEFT);
+                return this;
+            }
+        });
+    }    
     
