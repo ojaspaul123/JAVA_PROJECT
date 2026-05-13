@@ -625,5 +625,22 @@ private JPanel buildSummaryCard() {
                 return this;
             }
         });
+    }
+        private JButton accentButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setFont(FONT_HEAD);
+        btn.setForeground(BG_DARK);
+        btn.setBackground(ACCENT);
+        btn.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setFocusPainted(false);
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn.setMaximumSize(new Dimension(180, 42));
+
+        btn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btn.setBackground(ACCENT_HOVER); }
+            public void mouseExited(MouseEvent e)  { btn.setBackground(ACCENT); }
+        });
+        return btn;
     }    
     
