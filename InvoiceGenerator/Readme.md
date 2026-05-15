@@ -14,9 +14,9 @@ A desktop billing application built with **Java Swing** for small shop owners wh
 
 | Main Interface | Invoice Preview |
 |---|---|
-| [Main UI](<img width="699" height="554" alt="Screenshot 2026-05-15 225534" src="https://github.com/user-attachments/assets/1dabe9f5-f838-4782-9446-f9cda84750a3" />
-) | [Invoice Preview](<img width="695" height="551" alt="Screenshot 2026-05-15 225559" src="https://github.com/user-attachments/assets/190231af-9aa0-474a-afa0-8ac902021639" />
-) |
+| <img width="699" height="554" alt="Screenshot 2026-05-15 225534" src="https://github.com/user-attachments/assets/1dabe9f5-f838-4782-9446-f9cda84750a3" />
+| <img width="695" height="551" alt="Screenshot 2026-05-15 225559" src="https://github.com/user-attachments/assets/190231af-9aa0-474a-afa0-8ac902021639" />
+ |
 
 ---
 
