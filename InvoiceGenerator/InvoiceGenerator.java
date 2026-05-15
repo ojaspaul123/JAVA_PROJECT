@@ -642,5 +642,52 @@ private JPanel buildSummaryCard() {
             public void mouseExited(MouseEvent e)  { btn.setBackground(ACCENT); }
         });
         return btn;
-    }    
+    }
+
+ private JButton ghostButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setFont(FONT_BODY);
+        btn.setForeground(TEXT_MUTED);
+        btn.setBackground(BG_CARD);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1, true),
+            BorderFactory.createEmptyBorder(8, 14, 8, 14)
+        ));
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setFocusPainted(false);
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn.setMaximumSize(new Dimension(180, 40));
+        return btn;
+    }
+
+    private JLabel summaryLabel(String text) {
+        JLabel lbl = new JLabel(text);
+        lbl.setFont(FONT_MONO);
+        lbl.setForeground(TEXT_PRIMARY);
+        return lbl;
+    }
+
+    private JLabel muted(String text) {
+        JLabel lbl = new JLabel(text);
+        lbl.setFont(FONT_BODY);
+        lbl.setForeground(TEXT_MUTED);
+        return lbl;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    //  MAIN ENTRY POINT
+    // ═══════════════════════════════════════════════════════
+    public static void main(String[] args) {
+        // Run on Event Dispatch Thread (EDT) — best practice for Swing
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Set system look-and-feel (optional)
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ignored) {}
+            new InvoiceGenerator();
+        });
+    }
+}
+
+
     
